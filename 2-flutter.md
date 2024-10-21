@@ -324,22 +324,23 @@ import 'package:flutter/material.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final List<String> items = List<String>.generate(100, (i) => "Item $i");
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('ListView Example'),
+          title: Text('GridView Example'),
         ),
-        body: ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text('${items[index]}'),
-            );
-          },
+        body: GridView.count(
+          crossAxisCount: 2,
+          children: <Widget>[
+            Image.network('https://placehold.co/150x250/png'),
+            Image.network('https://placehold.co/150x250/png'),
+            Image.network('https://placehold.co/150x250/png'),
+            Image.network('https://placehold.co/150x250/png'),
+            Image.network('https://placehold.co/150x250/png'),
+            Image.network('https://placehold.co/150x250/png'),
+          ],
         ),
       ),
     );
@@ -537,3 +538,117 @@ class SecondScreen extends StatelessWidget {
 }
 ```
 </details>
+
+### Exercice 11 : Production - Retourner une valeur depuis un écran
+
+Créez une application Flutter qui permet à l'utilisateur de saisir un texte sur un second écran, et lorsque l'utilisateur revient à l'écran principal, le texte saisi est affiché.
+
+#### Objectifs :
+- Utiliser `Navigator.push` pour aller au second écran.
+- Utiliser `Navigator.pop` pour revenir à l'écran principal en renvoyant une valeur.
+- Afficher cette valeur sur l'écran principal.
+
+<details>
+<summary>Solution</summary>
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: FirstScreen(),
+    );
+  }
+}
+
+class FirstScreen extends StatefulWidget {
+  const FirstScreen({super.key});
+
+  @override
+  State<FirstScreen> createState() => _FirstScreenState();
+}
+
+class _FirstScreenState extends State<FirstScreen> {
+  String? returnedValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('First Screen'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            if (returnedValue != null) Text('Returned value: $returnedValue'),
+            ElevatedButton(
+              onPressed: () async {
+                final String? result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SecondScreen()),
+                );
+                setState(() {
+                  if (result != null && result.isEmpty) {
+                    returnedValue = null;
+                  } else {
+                    returnedValue = result;
+                  }
+                });
+              },
+              child: const Text('Go to Second Screen'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SecondScreen extends StatelessWidget {
+  final TextEditingController _controller = TextEditingController();
+
+  SecondScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Second Screen'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: <Widget>[
+            TextField(
+              controller: _controller,
+              decoration: const InputDecoration(labelText: 'Enter some text'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, _controller.text);
+              },
+              child: const Text('Return to First Screen'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+#### Explication :
+- L'écran principal (`FirstScreen`) affiche un bouton pour naviguer vers le second écran.
+- Une fois sur le second écran (`SecondScreen`), l'utilisateur saisit un texte et le renvoie à l'écran principal en appuyant sur un bouton.
+- `Navigator.pop(context, value)` permet de retourner la valeur saisie à l'écran principal.
+- `FirstScreen` récupère cette valeur avec `await Navigator.push(...)`, puis met à jour l'affichage grâce à `setState`.
+
+</details>
+
