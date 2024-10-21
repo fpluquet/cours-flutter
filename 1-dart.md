@@ -240,7 +240,7 @@ void main() {
 }
 ```
 
-## Questions :
+### Questions :
 
 1. Quelle est la différence entre l’utilisation des mixins et l’héritage simple en Dart ?
 2. Pourquoi utilise-t-on le mot-clé `with` dans ce code ? Quelle est son utilité dans ce contexte ?
