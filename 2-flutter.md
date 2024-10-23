@@ -313,8 +313,53 @@ class _MyFormState extends State<MyForm> {
 ```
 </details>
 
+## Exercice 7 : Compréhension des `ListView`
 
-## Exercice 7 : Compréhension des `ListView` (suite)
+Lisez le code suivant et expliquez comment fonctionne le `ListView` pour afficher une liste de noms.
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('ListView Example'),
+        ),
+        body: ListView(
+          children: <Widget>[
+            ListTile(title: Text('Alice')),
+            ListTile(title: Text('Bob')),
+            ListTile(title: Text('Charlie')),
+            ListTile(title: Text('David')),
+            ListTile(title: Text('Eve')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+### Questions :
+1. Comment le `ListView` affiche-t-il les éléments de la liste ? 
+2. Quelle est la différence avec un `Column` ?
+3. Qu'est-ce qu'un `ListTile` et pourquoi est-il utilisé ici ?
+
+<details>
+<summary>Solution</summary>
+
+1. Le `ListView` affiche les éléments de la liste de manière scrollable, en les empilant verticalement.
+2. Contrairement à un `Column`, un `ListView` est scrollable, ce qui permet d'afficher une liste plus longue que l'écran.
+3. Un `ListTile` est un widget qui affiche une ligne de texte avec une icône optionnelle. Il est utilisé ici pour afficher chaque nom de la liste.
+</details>
+
+
+## Exercice 8 : Compréhension des `ListView.builder`
 
 Lisez le code ci-dessous et expliquez comment fonctionne le `ListView.builder`. Quelle est la différence entre `ListView` et `ListView.builder` ?
 
@@ -329,18 +374,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('GridView Example'),
+          title: Text('ListView Example'),
         ),
-        body: GridView.count(
-          crossAxisCount: 2,
-          children: <Widget>[
-            Image.network('https://placehold.co/150x250/png'),
-            Image.network('https://placehold.co/150x250/png'),
-            Image.network('https://placehold.co/150x250/png'),
-            Image.network('https://placehold.co/150x250/png'),
-            Image.network('https://placehold.co/150x250/png'),
-            Image.network('https://placehold.co/150x250/png'),
-          ],
+        body: ListView.builder(
+          itemCount: 10,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text('Item $index'),
+            );
+          },
         ),
       ),
     );
@@ -354,13 +396,12 @@ class MyApp extends StatelessWidget {
 
 <details>
 <summary>Solution</summary>
-
 1. `ListView.builder` est plus performant pour de longues listes car il ne crée les widgets que lorsqu'ils sont visibles à l'écran, contrairement à `ListView`, qui crée tous les widgets en mémoire au moment de la construction.
 2. Pour une longue liste, `ListView.builder` améliore les performances et réduit l'utilisation de la mémoire en construisant les éléments à la demande.
 </details>
 
 
-## Exercice 8 : Production - Créer un `GridView` d'images
+## Exercice 9 : Production - Créer un `GridView` d'images
 
 Créez une application Flutter qui affiche un `GridView` de 6 images (vous pouvez utiliser des images en ligne ou des placeholders comme `NetworkImage`). Le `GridView` doit avoir deux colonnes.
 
@@ -383,12 +424,12 @@ class MyApp extends StatelessWidget {
         body: GridView.count(
           crossAxisCount: 2,
           children: <Widget>[
-            Image.network('https://via.placeholder.com/150'),
-            Image.network('https://via.placeholder.com/150'),
-            Image.network('https://via.placeholder.com/150'),
-            Image.network('https://via.placeholder.com/150'),
-            Image.network('https://via.placeholder.com/150'),
-            Image.network('https://via.placeholder.com/150'),
+            Image.network('https://placehold.co/150x250/png'),
+            Image.network('https://placehold.co/150x250/png'),
+            Image.network('https://placehold.co/150x250/png'),
+            Image.network('https://placehold.co/150x250/png'),
+            Image.network('https://placehold.co/150x250/png'),
+            Image.network('https://placehold.co/150x250/png'),
           ],
         ),
       ),
@@ -399,7 +440,7 @@ class MyApp extends StatelessWidget {
 </details>
 
 
-## Exercice 9 : Compréhension du `Navigator`
+## Exercice 10 : Compréhension du `Navigator`
 
 Lisez le code suivant et expliquez comment fonctionne le `Navigator` pour la navigation entre deux écrans dans Flutter.
 
@@ -467,7 +508,7 @@ class SecondScreen extends StatelessWidget {
 </details>
 
 
-## Exercice 10 : Production - Navigation avec des données
+## Exercice 11 : Production - Navigation avec des données
 
 Créez une application qui permet à l'utilisateur de saisir son nom dans un champ de texte sur un premier écran, puis de passer à un deuxième écran qui affiche le nom saisi.
 
@@ -539,11 +580,11 @@ class SecondScreen extends StatelessWidget {
 ```
 </details>
 
-### Exercice 11 : Production - Retourner une valeur depuis un écran
+## Exercice 12 : Production - Retourner une valeur depuis un écran
 
 Créez une application Flutter qui permet à l'utilisateur de saisir un texte sur un second écran, et lorsque l'utilisateur revient à l'écran principal, le texte saisi est affiché.
 
-#### Objectifs :
+### Objectifs :
 - Utiliser `Navigator.push` pour aller au second écran.
 - Utiliser `Navigator.pop` pour revenir à l'écran principal en renvoyant une valeur.
 - Afficher cette valeur sur l'écran principal.
@@ -595,7 +636,7 @@ class _FirstScreenState extends State<FirstScreen> {
                   MaterialPageRoute(builder: (context) => SecondScreen()),
                 );
                 setState(() {
-                  if (result != null && result.isEmpty) {
+                  if (result != null && result.isEmpty) { // si le texte est vide
                     returnedValue = null;
                   } else {
                     returnedValue = result;

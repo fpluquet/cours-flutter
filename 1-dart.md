@@ -16,6 +16,8 @@ void main() {
 
 Le code déclare deux variables avec le mot-clé `var`, affiche les valeurs en utilisant l'interpolation de chaînes avec `$`. Dart est moins verbeux que Java ou C# pour la déclaration des types grâce à l'inférence.
 
+Dart peut être typé ou non typé, et utilise `var` pour l'inférence de type, c'est-à-dire la déduction automatique du type de variable. Une fois que l'inférence de type est effectuée, la variable est fortement typée.
+
 </details>
 
 
@@ -29,9 +31,14 @@ Le code déclare deux variables avec le mot-clé `var`, affiche les valeurs en u
 
 ```dart
 int sumOfOddNumbers(List<int> numbers) {
+  if(numbers.isEmpty) return 0;
   return numbers.where((n) => n.isOdd).reduce((a, b) => a + b);
 }
 ```
+
+Cette solution utilise les méthodes `where` et `reduce` des collections en Dart. La méthode `where` filtre les éléments de la liste en fonction d'un prédicat, et `reduce` combine les éléments de la liste en appliquant une opération binaire.
+
+Attention: la condition `numbers.isEmpty` est ajoutée pour éviter une exception si la liste est vide (via le reduce).
 
 </details>
 
@@ -67,16 +74,24 @@ class Person {
 
   Person(this.name, this.age);
 
+  Person.empty() :  name = 'Unknown', age = 0;
+
   void greet() {
     print('Hello, my name is $name and I am $age years old.');
   }
 }
 
 void main() {
-  var p = Person('John', 30);
+  Person p = Person('John', 30);
   p.greet();
+
+  Person p2 = Person.empty();
+  p2.greet();
 }
 ```
+
+La classe `Person` a un constructeur qui initialise les champs `name` et `age`. Elle a aussi un constructeur nommé `empty` qui initialise les champs avec des valeurs par défaut. La méthode `greet` affiche un message personnalisé. Dart utilise des constructeurs nommés pour les cas spéciaux comme `empty`.
+
 </details>
 
 
@@ -97,7 +112,7 @@ void main() {
 <details>
 <summary>Solution</summary>
 
-Le code Dart utilise des paramètres nommés avec des valeurs par défaut. Cela est similaire à TypeScript, mais Dart demande des accolades `{}` pour les paramètres nommés.
+Le code Dart utilise des paramètres nommés avec des valeurs par défaut. Cela peut être similaire à TypeScript (qui utilise des objets pour avoir des paramètres nommés), mais Dart demande des accolades `{}` pour les paramètres nommés.
 
 </details>
 
@@ -160,10 +175,44 @@ void main() async {
 ```
 </details>
 
+## Exercice 8 : Gestion des exceptions personnalisées
 
-## Exercice 8 : Extensions et opérateurs
+Créez une exception personnalisée `DataException` (qui étend `Exception`) et modifiez la fonction `fetchData` pour lancer cette exception. Gérez cette exception dans le bloc `catch` du programme principal.
+
+<details>
+<summary>Solution</summary>
+
+```dart
+class DataException implements Exception {
+  final String message;
+  DataException(this.message);
+}
+
+Future<String> fetchData() async {
+  throw DataException('Data not found');
+}
+
+void main() async {
+  try {
+    print('Fetching data...');
+    var data = await fetchData();
+    print(data);
+  } catch (e) {
+    print('Error: $e');
+  }
+}
+```
+
+</details>
+
+
+## Exercice 9 : Extensions
 
 Créez une extension sur le type `int` pour ajouter une méthode `isEvenOrOdd` qui retourne une chaîne indiquant si l'entier est pair ou impair.
+
+**Indices :**
+- Pour créer une extension, utilisez le mot-clé `extension`.
+- Une extension peut ajouter des méthodes à un type existant sans modifier sa définition. Il faut indiquer le type sur lequel l'extension est définie (`int` ici) après le mot-clé `on`.
 
 <details>
 
@@ -184,7 +233,7 @@ void main() {
 
 </details>
 
-## Exercice 9 : Généricité
+## Exercice 10 : Généricité
 Écrivez une fonction générique en Dart qui prend une liste de n'importe quel type et retourne la première valeur de la liste. Comparez avec la syntaxe générique en C# et Java.
 
 <details>
@@ -205,7 +254,7 @@ void main() {
 </details>
 
 
-## Exercice 10 : Comprendre les mixins en Dart
+## Exercice 11 : Comprendre les mixins en Dart
 
 Lisez le code suivant qui montre l’utilisation de mixins en Dart. Ensuite, répondez aux questions qui suivent pour tester votre compréhension.
 
@@ -260,7 +309,7 @@ void main() {
 </details>
 
 
-## Exercice 11 : Mixins et héritage
+## Exercice 12 : Mixins et héritage
 
 Créez deux mixins `Flyable` (qui peut voler) et `Swimmable` (qui peut nager) et appliquez-les à une classe `Duck` (qui obtiendra donc 2 méthodes `fly` et `swim`). Expliquez comment Dart gère les mixins par rapport à l'héritage multiple en C#.
 
@@ -289,7 +338,7 @@ void main() {
 </details>
 
 
-## Exercice 12 : Déclaration et utilisation de `late`
+## Exercice 13 : Déclaration et utilisation de `late`
 
 Créez une classe `Circle` en Dart avec un champ `radius`. Utilisez le mot-clé `late` pour différer l'initialisation d'un autre champ appelé `area`. L'aire doit être calculée seulement lorsque la méthode `calculateArea` est appelée pour la première fois.
 
@@ -323,7 +372,7 @@ void main() {
 </details>
 
 
-## Exercice 13 : Utilisation de `late` avec une variable complexe
+## Exercice 14 : Utilisation de `late` avec une variable complexe
 
 Créez une classe `LazyInitialization` qui contient un champ `late` nommé `data`, qui doit être initialisé la première fois que la méthode `fetchData` est appelée. Simulez un processus de récupération de données (par exemple via un délai de 2 secondes) avant de l'initialiser.
 
@@ -356,7 +405,7 @@ void main() async {
 ```
 </details>
 
-## Exercice 14 : Les Streams 
+## Exercice 15 : Les Streams 
 
 Lisez attentivement le code Dart suivant qui utilise un `Stream` pour émettre une série de nombres entiers. Répondez ensuite aux questions qui suivent pour tester votre compréhension.
 
@@ -372,6 +421,17 @@ void main() async {
   await for (var number in numberStream()) {
     print('Received: $number');
   }
+
+  print(await numberStream().map((n) {
+    print("map: $n");
+    return n * 2;
+  }).where((n) {
+    print("where: $n");
+    return n >= 4;
+  }).reduce((a, b) {
+    print("reduce: $a, $b");
+    return a + b;
+  }));
 }
 ```
 
@@ -382,6 +442,8 @@ void main() async {
 3. Pourquoi utilise-t-on `await` dans la boucle `for` dans `main` ?
 4. Comment ce code diffère-t-il de l'utilisation d'un simple `Future` ?
 5. Que se passerait-il si le `Future.delayed` était retiré du code ?
+6. Comment fonctionne le pipeline de transformation (`map`, `where`, `reduce`) sur le `Stream` dans la deuxième partie du code ?
+7. Combien de temps faudra-t-il pour exécuter ce code en raison des délais de 1 seconde entre chaque émission ?
 
 <details>
 <summary>Solution</summary>
@@ -391,10 +453,12 @@ void main() async {
 3. Le `await` dans la boucle `for` permet d'attendre la fin de chaque émission avant de continuer l'exécution.
 4. Ce code utilise un `Stream` pour émettre des valeurs de manière asynchrone, ce qui permet de gérer les événements de manière continue.
 5. Si le `Future.delayed` était retiré, les nombres seraient émis instantanément sans délai.
+6. Le pipeline de transformation (`map`, `where`, `reduce`) est appliqué sur le `Stream` pour doubler chaque nombre, filtrer les nombres supérieurs à 5 et enfin additionner les nombres restants. Le résultat final est affiché. Chaque étape du pipeline est exécutée dès que chaque élément du `Stream` est émis. Pour vous en convaincre, vous pouvez regarder comment les messages de débogage sont affichés dans la console.
+7. Le code prendra environ 10 secondes pour s'exécuter en raison des délais de 1 seconde (5 secondes pour la première partie et 5 secondes pour la deuxième partie).
 
 </details>
 
-## Exercice 15 : StreamController
+## Exercice 16 : StreamController
 
 Créez un programme Dart qui utilise un `StreamController` pour émettre des événements à partir de la console. Chaque fois que l'utilisateur tape une entrée, celle-ci doit être transmise par le `Stream` et affichée par un auditeur.
 
@@ -436,7 +500,7 @@ void main() {
 </details>
 
 
-## Exercice 16 : Création d'un Stream de chaînes de caractères
+## Exercice 17 : Création d'un Stream de chaînes de caractères
 
 Écrivez une fonction `sentencesGenerator` qui émet un **Stream** de chaînes de caractères représentant des phrases aléatoires. Chaque phrase doit être construite en concaténant un nom et une action choisis au hasard dans deux listes distinctes (par exemple : `["Alice", "Bob", "Charlie"]` et `["mange", "court", "lit"]`). Ajoutez un délai de 1 seconde entre chaque phrase émise. Utilisez cette fonction dans un programme pour afficher chaque phrase au fur et à mesure qu'elle est émise.
 
