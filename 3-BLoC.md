@@ -1,33 +1,33 @@
-# L'architecture en BLoC avec flutter_bloc
+## L'architecture en BLoC avec flutter_bloc
 
-## **Objectifs**
+### **Objectifs**
 - Comprendre l'architecture BLoC avec la bibliothèque `flutter_bloc`.
 - Apprendre à séparer la logique métier de l'interface utilisateur.
 - Utiliser les classes `Bloc`, `Event`, et `State` de `flutter_bloc` pour gérer l'état.
 - Implémenter un modèle BLoC simple avec `flutter_bloc` dans une application Flutter.
 
-## **Introduction à BLoC**
+### **Introduction à BLoC**
 
 L'architecture BLoC (Business Logic Component) est un modèle de conception qui sépare la logique métier de l'interface utilisateur dans une application Flutter. Elle permet de gérer l'état de manière réactive et de structurer le code de manière modulaire et maintenable.
 
-### Avantages de BLoC
+#### Avantages de BLoC
 
 1. **Séparation des préoccupations** : Permet de séparer la logique métier de l'interface utilisateur.
 2. **Réactivité** : Facilite la mise à jour de l'interface utilisateur en réponse aux événements.
 3. **Maintenabilité** : Permet de structurer le code de manière modulaire et réutilisable.
 
 
-## **Introduction à flutter_bloc**
+### **Introduction à flutter_bloc**
 
 La bibliothèque **flutter_bloc** simplifie la mise en œuvre de l'architecture BLoC en Flutter. Elle fournit des outils intégrés pour gérer la logique de l'application et l'état de manière réactive, avec des classes spécialement conçues pour structurer le code de façon modulaire et maintenable.
 
-### Avantages de `flutter_bloc`
+#### Avantages de `flutter_bloc`
 
 1. **Structure** : Fournit un modèle organisé et extensible pour la gestion d'état.
 2. **Réactivité** : Permet à l'interface utilisateur de réagir facilement aux changements d'état.
 3. **Testabilité** : Facilite les tests unitaires et d'intégration.
 
-## **Concepts Clés**
+### **Concepts Clés**
 
 1. **Bloc** : La classe principale qui contient la logique métier et gère les événements pour émettre des états.
 2. **Event** : Représente une action ou un événement utilisateur (ex : clic sur un bouton).
@@ -35,9 +35,9 @@ La bibliothèque **flutter_bloc** simplifie la mise en œuvre de l'architecture 
 4. **BlocProvider** : Un widget qui fournit le Bloc à l'arborescence des widgets.
 5. **BlocBuilder** : Un widget qui reconstruit l'interface utilisateur en réponse à un changement d'état.
 
-## **Implémentation avec flutter_bloc**
+### **Implémentation avec flutter_bloc**
 
-### 1. Ajouter `flutter_bloc` au projet
+#### 1. Ajouter `flutter_bloc` au projet
 
 Demander à `flutter` d'ajouter la dépendance `flutter_bloc` au projet.
 
@@ -45,11 +45,11 @@ Demander à `flutter` d'ajouter la dépendance `flutter_bloc` au projet.
 flutter pub add flutter_bloc
 ```
 
-### 2. Créer les classes Event et State
+#### 2. Créer les classes Event et State
 
 Créez les classes pour gérer les événements et les états.
 
-#### Exemple (CounterEvent et CounterState)
+##### Exemple (CounterEvent et CounterState)
 
 ```dart
 // counter_event.dart
@@ -74,11 +74,11 @@ class CounterUpdated extends CounterState {
 }
 ```
 
-### 3. Créer la classe Bloc
+#### 3. Créer la classe Bloc
 
 La classe Bloc gère les événements et émet des états en réponse en utilisant `on<Event>((event, emit) => ...)`. Chaque événement est associé à une action qui modifie l'état. L'état initial est défini dans le constructeur de la classe Bloc (`super(CounterInitial())`). Les nouveaux états sont émis en utilisant `emit(State)`. Chaque `emit` déclenche la reconstruction des widgets associés via l'utilisation du `BlocBuilder`.
 
-#### Exemple de Code (CounterBloc)
+##### Exemple de Code (CounterBloc)
 
 ```dart
 // counter_bloc.dart
@@ -100,11 +100,11 @@ On peut voir que la classe `CounterBloc` étend la classe `Bloc` de `flutter_blo
 
 Les états devraient être en lecture seule et ne doivent pas être modifiés directement (remarquez que le champ `value` de `CounterState` est déclaré comme `final`). Ils sont émis par le Bloc en réponse aux événements et sont utilisés pour mettre à jour l'interface utilisateur.
 
-### 4. Fournir le Bloc à l’Interface Utilisateur
+#### 4. Fournir le Bloc à l’Interface Utilisateur
 
 Utiliser le `BlocProvider` pour rendre le BLoC accessible dans l’arborescence des widgets.
 
-#### Exemple de Code (main.dart)
+##### Exemple de Code (main.dart)
 
 ```dart
 import 'package:flutter/material.dart';
@@ -133,11 +133,11 @@ On voit que le `BlocProvider` est utilisé pour fournir le `CounterBloc` à l'in
 
 Si vous avez besoin de fournir plusieurs blocs à l'interface utilisateur, vous pouvez utiliser `MultiBlocProvider` pour fournir plusieurs blocs à la fois.
 
-### 5. Utiliser le Bloc dans un Widget
+#### 5. Utiliser le Bloc dans un Widget
 
 Dans l’interface utilisateur, utilisez `BlocBuilder` pour reconstruire le widget lorsque l’état change.
 
-#### Exemple de Code (CounterScreen.dart)
+##### Exemple de Code (CounterScreen.dart)
 
 ```dart
 import 'package:flutter/material.dart';
@@ -182,12 +182,273 @@ On peut voir que le `BlocBuilder` est utilisé pour reconstruire le widget en r�
 Le `context.read<CounterBloc>()` est utilisé pour accéder au `CounterBloc` fourni par le `BlocProvider` dans l'arborescence des widgets. On émet un événement `IncrementCounter` en appuyant sur le bouton `FloatingActionButton`, ce qui incrémente le compteur et met à jour l'interface utilisateur. La méthode `add(Event)` sur le bloc récupéré est utilisée pour ajouter un événement au Bloc.
 
 
-## **Bonnes Pratiques**
+## Bonnes pratiques pour flutter_bloc
 
-1. **Éviter la logique UI dans le Bloc** : Le Bloc doit contenir uniquement la logique métier. N'y incluez pas de code d'interface utilisateur.
-2. **Utiliser `BlocListener` pour les actions uniques** : Utilisez `BlocListener` pour les actions qui ne nécessitent pas de reconstruction, comme les notifications.
-3. **Optimiser les performances** : N’abusez pas des mises à jour de l’état pour éviter les reconstructions excessives de l’interface utilisateur.
+### 1. Séparation des Responsabilités
 
+#### Garder le BLoC Pur
+- Le BLoC ne doit contenir que la logique métier
+- Éviter tout code UI dans le BLoC
+- Ne pas référencer de widgets ou de contexte Flutter dans le BLoC
+- Maintenir une séparation claire entre la logique et la présentation
+
+```dart
+// ❌ Mauvaise pratique
+class UserBloc extends Bloc<UserEvent, UserState> {
+  UserBloc() : super(UserInitial()) {
+    on<LoadUser>((event, emit) {
+      // Ne pas faire cela
+      showDialog(
+        context: context,
+        builder: (context) => LoadingDialog(),
+      );
+    });
+  }
+}
+
+// ✅ Bonne pratique
+class UserBloc extends Bloc<UserEvent, UserState> {
+  UserBloc() : super(UserInitial()) {
+    on<LoadUser>((event, emit) {
+      emit(UserLoading());
+      // Logique métier pure
+      final user = await userRepository.getUser();
+      emit(UserLoaded(user));
+    });
+  }
+}
+```
+
+### 2. Gestion des États
+
+#### États Immutables
+- Toujours créer des états immutables
+- Utiliser des champs `final`
+- Implémenter `copyWith()` pour les modifications d'état
+- Éviter de modifier directement l'état
+
+```dart
+// ✅ Bonne pratique
+class UserState {
+  final String name;
+  final int age;
+  final bool isLoggedIn;
+
+  const UserState({
+    required this.name,
+    required this.age,
+    required this.isLoggedIn,
+  });
+
+  UserState copyWith({
+    String? name,
+    int? age,
+    bool? isLoggedIn,
+  }) {
+    return UserState(
+      name: name ?? this.name,
+      age: age ?? this.age,
+      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
+    );
+  }
+}
+```
+
+#### Granularité des États
+- Créer des états distincts pour chaque situation significative
+- Éviter les états trop génériques
+- Utiliser des classes distinctes plutôt que des booléens
+
+```dart
+// ❌ Mauvaise pratique
+class UserState {
+  final bool isLoading;
+  final bool hasError;
+  final User? user;
+}
+
+// ✅ Bonne pratique
+abstract class UserState {}
+class UserInitial extends UserState {}
+class UserLoading extends UserState {}
+class UserLoaded extends UserState {
+  final User user;
+  UserLoaded(this.user);
+}
+class UserError extends UserState {
+  final String message;
+  UserError(this.message);
+}
+```
+
+### 3. Gestion des Événements
+
+#### Événements Descriptifs
+- Nommer les événements de manière claire et descriptive
+- Inclure toutes les données nécessaires dans l'événement
+- Éviter les événements génériques
+
+```dart
+// ❌ Mauvaise pratique
+class UpdateUser extends UserEvent {
+  final Map<String, dynamic> data;
+}
+
+// ✅ Bonne pratique
+class UpdateUserProfile extends UserEvent {
+  final String name;
+  final int age;
+  final String location;
+
+  UpdateUserProfile({
+    required this.name,
+    required this.age,
+    required this.location,
+  });
+}
+```
+
+### 4. Optimisation des Performances
+
+#### Utilisation Appropriée des Widgets
+- Utiliser `BlocBuilder` uniquement quand nécessaire
+- Préférer `BlocSelector` pour des mises à jour ciblées
+- Utiliser `BlocListener` pour les effets de bord
+- Éviter les reconstructions inutiles
+
+```dart
+// ❌ Mauvaise pratique - Reconstruction complète
+BlocBuilder<UserBloc, UserState>(
+  builder: (context, state) {
+    return Column(
+      children: [
+        Text(state.user.name),
+        ExpensiveWidget(), // Se reconstruit inutilement
+      ],
+    );
+  },
+);
+
+// ✅ Bonne pratique - Reconstruction ciblée
+Column(
+  children: [
+    BlocSelector<UserBloc, UserState, String>(
+      selector: (state) => state.user.name,
+      builder: (context, name) => Text(name),
+    ),
+    ExpensiveWidget(), // Ne se reconstruit pas
+  ],
+);
+```
+
+#### Gestion de la Mémoire
+- Fermer les BLoCs quand ils ne sont plus nécessaires
+- Utiliser `BlocProvider` au bon niveau dans l'arbre des widgets
+- Éviter de créer des BLoCs inutilement
+
+```dart
+// ✅ Bonne pratique
+@override
+void dispose() {
+  bloc.close();
+  super.dispose();
+}
+```
+
+### 5. Tests
+
+#### Tests Unitaires
+- Tester chaque événement du BLoC individuellement
+- Vérifier les transitions d'état
+- Mocker les dépendances
+
+```dart
+// ✅ Bonne pratique
+void main() {
+  late UserBloc bloc;
+  late MockUserRepository repository;
+
+  setUp(() {
+    repository = MockUserRepository();
+    bloc = UserBloc(repository);
+  });
+
+  blocTest<UserBloc, UserState>(
+    'émet [UserLoading, UserLoaded] quand LoadUser réussit',
+    build: () => bloc,
+    act: (bloc) => bloc.add(LoadUser()),
+    expect: () => [
+      isA<UserLoading>(),
+      isA<UserLoaded>(),
+    ],
+  );
+}
+```
+
+### 6. Architecture
+
+#### Organisation du Code
+- Structurer les fichiers par feature
+- Séparer les événements et les états dans des fichiers distincts
+- Regrouper les BLoCs liés
+
+```plaintext
+lib/
+  ├── features/
+  │   ├── auth/
+  │   │   ├── bloc/
+  │   │   │   ├── auth_bloc.dart
+  │   │   │   ├── auth_event.dart
+  │   │   │   └── auth_state.dart
+  │   │   ├── repository/
+  │   │   └── ui/
+  │   └── user/
+  │       ├── bloc/
+  │       ├── repository/
+  │       └── ui/
+  └── shared/
+```
+
+#### Dépendances
+- Injecter les dépendances plutôt que de les créer dans le BLoC
+- Utiliser des repositories pour l'accès aux données
+- Favoriser l'inversion de dépendance
+
+```dart
+// ✅ Bonne pratique
+class UserBloc extends Bloc<UserEvent, UserState> {
+  final UserRepository userRepository;
+  
+  UserBloc(this.userRepository) : super(UserInitial());
+}
+```
+
+### 7. Documentation
+
+#### Documentation du Code
+- Documenter les événements et les états
+- Expliquer les transitions d'état complexes
+- Inclure des exemples d'utilisation
+
+```dart
+/// Représente l'état d'un utilisateur dans l'application
+/// 
+/// [UserLoaded] est émis quand les données de l'utilisateur
+/// sont chargées avec succès
+/// 
+/// Exemple:
+/// ```dart
+/// BlocBuilder<UserBloc, UserState>(
+///   builder: (context, state) {
+///     if (state is UserLoaded) {
+///       return Text(state.user.name);
+///     }
+///     return LoadingIndicator();
+///   },
+/// )
+/// ```
+abstract class UserState {}
+```
 
 ## Cubit vs Bloc
 
@@ -795,120 +1056,345 @@ Créez un petit widget pour afficher les catégories en bas de l'écran (via un 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// task_event.dart
+// Events
 abstract class TaskEvent {}
 
 class AddTask extends TaskEvent {
   final String task;
   final String category;
-
   AddTask(this.task, this.category);
 }
 
 class RemoveTask extends TaskEvent {
   final String task;
-
   RemoveTask(this.task);
 }
 
 class ToggleCompleteTask extends TaskEvent {
   final String task;
-
   ToggleCompleteTask(this.task);
 }
 
-// task_state.dart
-abstract class TaskState {
-  final List<Task> tasks;
-  TaskState(this.tasks);
+abstract class CategoryEvent {}
+
+class SelectCategory extends CategoryEvent {
+  final String category;
+  SelectCategory(this.category);
 }
 
-class TaskInitial extends TaskState {
-  TaskInitial() : super([]);
-}
-
-class TaskUpdated extends TaskState {
-  TaskUpdated(List<Task> tasks) : super(tasks);
-}
-
+// States
 class Task {
   final String name;
   final bool completed;
   final String category;
 
   Task(this.name, this.completed, this.category);
-}
 
-// category_event.dart
-abstract class CategoryEvent {}
-
-class SelectCategory extends CategoryEvent {
-  final String category;
-
-  SelectCategory(this.category);
-}
-
-// category_state.dart
-abstract class CategoryState {
-  final List<String> categories;
-  final String selectedCategory;
-
-  CategoryState(this.categories, this.selectedCategory);
-}
-
-class CategoryInitial extends CategoryState {
-  CategoryInitial(List<String> categories)
-      : super(categories, categories.first);
-}
-
-class CategoryUpdated extends CategoryState {
-  CategoryUpdated(List<String> categories, String selectedCategory)
-      : super(categories, selectedCategory);
-}
-
-class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
-  CategoryBloc(List<String> categories) : super(CategoryInitial(categories)) {
-    on<SelectCategory>((event, emit) {
-      emit(CategoryUpdated(state.categories, event.category));
-    });
+  Task copyWith({String? name, bool? completed, String? category}) {
+    return Task(
+      name ?? this.name,
+      completed ?? this.completed,
+      category ?? this.category,
+    );
   }
 }
 
-// task_bloc.dart
+class TaskState {
+  final List<Task> tasks;
+  final bool isLoading;
+  final String? error;
+
+  TaskState({
+    required this.tasks,
+    this.isLoading = false,
+    this.error,
+  });
+
+  TaskState copyWith({
+    List<Task>? tasks,
+    bool? isLoading,
+    String? error,
+  }) {
+    return TaskState(
+      tasks: tasks ?? this.tasks,
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+    );
+  }
+}
+
+class CategoryState {
+  final List<String> categories;
+  final String selectedCategory;
+
+  CategoryState({
+    required this.categories,
+    required this.selectedCategory,
+  });
+
+  CategoryState copyWith({
+    List<String>? categories,
+    String? selectedCategory,
+  }) {
+    return CategoryState(
+      categories: categories ?? this.categories,
+      selectedCategory: selectedCategory ?? this.selectedCategory,
+    );
+  }
+}
+
+// BLoCs
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
-  TaskBloc() : super(TaskInitial()) {
+  TaskBloc() : super(TaskState(tasks: [])) {
     on<AddTask>((event, emit) {
       final newTasks = List<Task>.from(state.tasks)
         ..add(Task(event.task, false, event.category));
-      emit(TaskUpdated(newTasks));
+      emit(state.copyWith(tasks: newTasks));
     });
 
     on<RemoveTask>((event, emit) {
-      final newTasks = List<Task>.from(state.tasks)
-        ..removeWhere((task) => task.name == event.task);
-      emit(TaskUpdated(newTasks));
+      final newTasks =
+          state.tasks.where((task) => task.name != event.task).toList();
+      emit(state.copyWith(tasks: newTasks));
     });
 
     on<ToggleCompleteTask>((event, emit) {
       final newTasks = state.tasks.map((task) {
         if (task.name == event.task) {
-          return Task(task.name, !task.completed, task.category);
-        } else {
-          return task;
+          return task.copyWith(completed: !task.completed);
         }
+        return task;
       }).toList();
-      emit(TaskUpdated(newTasks));
+      emit(state.copyWith(tasks: newTasks));
     });
   }
 }
 
-// main.dart
+class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
+  CategoryBloc(List<String> categories)
+      : super(CategoryState(
+          categories: categories,
+          selectedCategory: categories.first,
+        )) {
+    on<SelectCategory>((event, emit) {
+      emit(state.copyWith(selectedCategory: event.category));
+    });
+  }
+}
+
+// UI Components
+class TaskScreen extends StatelessWidget {
+  const TaskScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Task Manager'),
+      ),
+      bottomNavigationBar: const CategoriesBottomNavigationBar(),
+      body: const Column(
+        children: [
+          CategorySelector(),
+          AddTaskForm(),
+          Expanded(child: TaskList()),
+        ],
+      ),
+    );
+  }
+}
+
+class CategorySelector extends StatelessWidget {
+  const CategorySelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CategoryBloc, CategoryState>(
+      buildWhen: (previous, current) =>
+          previous.categories != current.categories ||
+          previous.selectedCategory != current.selectedCategory,
+      builder: (context, state) {
+        return OverflowBar(
+          alignment: MainAxisAlignment.center,
+          children: state.categories.map((category) {
+            final isSelected = category == state.selectedCategory;
+            return TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor:
+                    isSelected ? Theme.of(context).primaryColor : null,
+                foregroundColor:
+                    isSelected ? Theme.of(context).colorScheme.onPrimary : null,
+              ),
+              onPressed: () {
+                context.read<CategoryBloc>().add(SelectCategory(category));
+              },
+              child: Text(category),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+}
+
+class AddTaskForm extends StatefulWidget {
+  const AddTaskForm({super.key});
+
+  @override
+  State<AddTaskForm> createState() => _AddTaskFormState();
+}
+
+class _AddTaskFormState extends State<AddTaskForm> {
+  final _taskController = TextEditingController();
+
+  @override
+  void dispose() {
+    _taskController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _taskController,
+              decoration: const InputDecoration(labelText: 'Task'),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final task = _taskController.text.trim();
+              if (task.isNotEmpty) {
+                final category =
+                    context.read<CategoryBloc>().state.selectedCategory;
+                context.read<TaskBloc>().add(AddTask(task, category));
+                _taskController.clear();
+              }
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TaskList extends StatelessWidget {
+  const TaskList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CategoryBloc, CategoryState>(
+      buildWhen: (previous, current) =>
+          previous.selectedCategory != current.selectedCategory,
+      builder: (context, categoryState) {
+        return BlocBuilder<TaskBloc, TaskState>(
+          buildWhen: (previous, current) => previous.tasks != current.tasks,
+          builder: (context, taskState) {
+            final filteredTasks = taskState.tasks
+                .where(
+                    (task) => task.category == categoryState.selectedCategory)
+                .toList();
+
+            return ListView.builder(
+              itemCount: filteredTasks.length,
+              itemBuilder: (context, index) {
+                final task = filteredTasks[index];
+                return TaskListItem(task: task);
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class TaskListItem extends StatelessWidget {
+  final Task task;
+
+  const TaskListItem({
+    super.key,
+    required this.task,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(
+        task.name,
+        style: TextStyle(
+          decoration: task.completed ? TextDecoration.lineThrough : null,
+        ),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              context.read<TaskBloc>().add(RemoveTask(task.name));
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              task.completed ? Icons.check_box : Icons.check_box_outline_blank,
+            ),
+            onPressed: () {
+              context.read<TaskBloc>().add(ToggleCompleteTask(task.name));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CategoriesBottomNavigationBar extends StatelessWidget {
+  const CategoriesBottomNavigationBar({super.key});
+
+  static const icons = {
+    'Work': Icons.work,
+    'Personal': Icons.person,
+    'Shopping': Icons.shopping_cart,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CategoryBloc, CategoryState>(
+      buildWhen: (previous, current) =>
+          previous.categories != current.categories ||
+          previous.selectedCategory != current.selectedCategory,
+      builder: (context, state) {
+        return BottomNavigationBar(
+          items: state.categories
+              .map((category) => BottomNavigationBarItem(
+                    icon: Icon(icons[category]!),
+                    label: category,
+                  ))
+              .toList(),
+          currentIndex: state.categories.indexOf(state.selectedCategory),
+          onTap: (index) {
+            final category = state.categories[index];
+            context.read<CategoryBloc>().add(SelectCategory(category));
+          },
+        );
+      },
+    );
+  }
+}
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -922,154 +1408,15 @@ class MyApp extends StatelessWidget {
             create: (_) => TaskBloc(),
           ),
         ],
-        child: TaskScreen(),
+        child: const TaskScreen(),
       ),
     );
-  }
-}
-
-class TaskScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final categoryBloc = context.read<CategoryBloc>();
-    final taskBloc = context.read<TaskBloc>();
-    final taskController = TextEditingController();
-
-    categoryBloc.stream.listen((state) {
-      print('Category: ${state.selectedCategory}');
-    });
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Task Bloc Example'),
-      ),
-      bottomNavigationBar: CategoriesBottomNavigationBar(),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          BlocBuilder<CategoryBloc, CategoryState>(
-            builder: (context, state) {
-              return OverflowBar(
-                alignment: MainAxisAlignment.center,
-                children: state.categories
-                    .map((category) => TextButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: category == state.selectedCategory
-                                ? Theme.of(context)
-                                    .buttonTheme
-                                    .colorScheme
-                                    ?.primary
-                                : null,
-                            foregroundColor: category == state.selectedCategory
-                                ? Theme.of(context)
-                                    .buttonTheme
-                                    .colorScheme
-                                    ?.onPrimary
-                                : null,
-                          ),
-                          onPressed: () {
-                            categoryBloc.add(SelectCategory(category));
-                          },
-                          child: Text(category),
-                        ))
-                    .toList(),
-              );
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: taskController,
-              decoration: const InputDecoration(labelText: 'Task'),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final task = taskController.text;
-              taskBloc.add(AddTask(
-                  task, context.read<CategoryBloc>().state.selectedCategory));
-              taskController.clear();
-            },
-            child: const Text('Add Task'),
-          ),
-          // On regarde le bloc de catégorie pour être mis à jour quand la catégorie sélectionnée est changée
-          BlocBuilder<CategoryBloc, CategoryState>(builder: (context, state) {
-            // On regarde le bloc de tâches pour afficher les tâches de la catégorie sélectionnée
-            return BlocBuilder<TaskBloc, TaskState>(
-              builder: (context, state) {
-                return Column(
-                  children: state
-                      .tasks // On va filtrer les tâches pour ne garder que celles de la catégorie sélectionnée
-                      .where((task) =>
-                          task.category ==
-                          context.read<CategoryBloc>().state.selectedCategory)
-                      .map((task) => ListTile(
-                            title: Text(
-                              task.name,
-                              style: task.completed
-                                  ? const TextStyle(
-                                      decoration: TextDecoration.lineThrough)
-                                  : null,
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () {
-                                    taskBloc.add(RemoveTask(task.name));
-                                  },
-                                ),
-                                IconButton(
-                                  icon: Icon(task.completed
-                                      ? Icons.check_box
-                                      : Icons.check_box_outline_blank),
-                                  onPressed: () {
-                                    taskBloc.add(ToggleCompleteTask(task.name));
-                                  },
-                                ),
-                              ],
-                            ),
-                          ))
-                      .toList(),
-                );
-              },
-            );
-          }),
-        ],
-      ),
-    );
-  }
-}
-
-class CategoriesBottomNavigationBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    const icons = {
-      'Work': Icons.work,
-      'Personal': Icons.person,
-      'Shopping': Icons.shopping_cart,
-    };
-    return BlocBuilder<CategoryBloc, CategoryState>(builder: (context, state) {
-      return BottomNavigationBar(
-        items: state.categories
-            .map((category) => BottomNavigationBarItem(
-                  icon: Icon(icons[category]),
-                  label: category,
-                ))
-            .toList(),
-        currentIndex: state.categories.indexOf(state.selectedCategory),
-        onTap: (index) {
-          final category = context.read<CategoryBloc>().state.categories[index];
-          context.read<CategoryBloc>().add(SelectCategory(category));
-        },
-      );
-    });
   }
 }
 ```
 
 Le `MultiBlocProvider` est utilisé pour fournir les deux Blocs à l'interface utilisateur. Le `CategoryBloc` gère les catégories et le `TaskBloc` gère les tâches. Lorsqu'on appuie sur une catégorie, le `CategoryBloc` émet un événement `SelectCategory` pour mettre à jour la catégorie sélectionnée. Le `TaskBloc` utilise la catégorie sélectionnée pour filtrer les tâches affichées dans l'interface utilisateur.
+
+L'utilisation de `buildWhen:` dans les `BlocBuilder` permet de contrôler quand les widgets sont reconstruits en fonction des changements d'état. Cela permet d'optimiser les performances en évitant les reconstructions inutiles.
 
 </details>
