@@ -546,31 +546,43 @@ Sans regarder le code ci-dessus, essayez d'implémenter un modèle BLoC simple p
     
 ```dart
 // counter_event.dart
+// Cette classe abstraite définit les différents types d'événements qui peuvent modifier l'état du compteur.
 abstract class CounterEvent {}
 
+// Cette classe concrète représente l'événement d'incrément du compteur.
 class IncrementCounter extends CounterEvent {}
 
 // counter_state.dart
+// Cette classe abstraite définit les différents états possibles du compteur.
 abstract class CounterState {
+    // La propriété `counter` contient la valeur actuelle du compteur.
     final int counter;
     CounterState(this.counter);
 }
 
+// Cette classe concrète représente l'état initial du compteur, avec une valeur de 0.
 class CounterInitial extends CounterState {
     CounterInitial() : super(0);
 }
 
+// Cette classe concrète représente l'état mis à jour du compteur, avec une nouvelle valeur.
 class CounterUpdated extends CounterState {
     CounterUpdated(int counter) : super(counter);
 }
 
 // counter_bloc.dart
+// Cette classe `CounterBloc` implémente la logique métier liée au compteur.
+// Elle utilise le package `flutter_bloc` pour gérer les événements et les états.
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'counter_event.dart';
 import 'counter_state.dart';
 
+
 class CounterBloc extends Bloc<CounterEvent, CounterState> {
+    // Le constructeur initialise l'état initial du compteur.
     CounterBloc() : super(CounterInitial()) {
+    // Cette méthode gère l'événement `IncrementCounter`.
+    // Lorsque cet événement est reçu, elle met à jour l'état du compteur.
     on<IncrementCounter>((event, emit) {
         final newCount = state.counter + 1;
         emit(CounterUpdated(newCount));
@@ -579,6 +591,8 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
 }
 
 // main.dart
+// Ce fichier contient le point d'entrée de l'application Flutter.
+// Il crée l'instance de `CounterBloc` et l'injecte dans l'arbre des widgets.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -590,12 +604,14 @@ void main() {
     runApp(MyApp());
 }
 
+// Cette classe `MyApp` crée le widget racine de l'application.
 class MyApp extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: BlocProvider(
+        // Crée une instance de `CounterBloc` et la met à disposition dans l'arbre des widgets.
         create: (_) => CounterBloc(),
         child: CounterScreen(),
         ),
@@ -603,9 +619,12 @@ class MyApp extends StatelessWidget {
     }
 }
 
+// Cette classe `CounterScreen` crée l'interface utilisateur de l'application.
+// Elle affiche le compteur et un bouton pour l'incrémenter.
 class CounterScreen extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
+    // Récupère l'instance de `CounterBloc` fournie par le `BlocProvider`.
     final counterBloc = context.read<CounterBloc>();
 
     return Scaffold(
@@ -613,6 +632,8 @@ class CounterScreen extends StatelessWidget {
         title: Text('Counter Bloc Example'),
         ),
         body: Center(
+        // `BlocBuilder` écoute les changements d'état du `CounterBloc`
+        // et met à jour l'interface utilisateur en conséquence.
         child: BlocBuilder<CounterBloc, CounterState>(
             builder: (context, state) {
             return Text(
@@ -624,6 +645,8 @@ class CounterScreen extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
         onPressed: () {
+            // Lorsque le bouton est cliqué, on ajoute l'événement `IncrementCounter`
+            // au `CounterBloc`, ce qui déclenchera la mise à jour de l'état.
             counterBloc.add(IncrementCounter());
         },
         child: Icon(Icons.add),
@@ -642,12 +665,15 @@ Essayez d'implémenter un modèle BLoC simple pour gérer un formulaire de conne
     <summary>Solution</summary>
     
 ```dart
+// login_event.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// login_event.dart
+// Cette classe abstraite définit les différents types d'événements liés à l'authentification.
 abstract class LoginEvent {}
 
+// Cette classe concrète représente l'événement de soumission du formulaire de connexion.
+// Elle contient les informations de connexion saisies par l'utilisateur.
 class SubmitLogin extends LoginEvent {
   final String username;
   final String password;
@@ -656,18 +682,23 @@ class SubmitLogin extends LoginEvent {
 }
 
 // login_state.dart
+// Cette classe abstraite définit les différents états possibles de l'authentification.
 abstract class LoginState {}
 
+// Ces classes concrètes représentent les différents états de l'authentification.
 class LoginInitial extends LoginState {}
-
 class LoginSuccess extends LoginState {}
-
 class LoginError extends LoginState {}
 
 // login_bloc.dart
-
+// Cette classe `LoginBloc` implémente la logique métier liée à l'authentification.
+// Elle utilise le package `flutter_bloc` pour gérer les événements et les états.
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  // Le constructeur initialise l'état initial de l'authentification.
   LoginBloc() : super(LoginInitial()) {
+    // Cette méthode gère l'événement `SubmitLogin`.
+    // Lorsque cet événement est reçu, elle vérifie les informations de connexion
+    // et met à jour l'état en conséquence (succès ou erreur).
     on<SubmitLogin>((event, emit) {
       if (event.username == 'admin' && event.password == 'p@ssword') {
         emit(LoginSuccess());
@@ -679,17 +710,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 }
 
 // main.dart
+// Ce fichier contient le point d'entrée de l'application Flutter.
+// Il crée l'instance de `LoginBloc` et l'injecte dans l'arbre des widgets.
 
 void main() {
   runApp(MyApp());
 }
 
+// Cette classe `MyApp` crée le widget racine de l'application.
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BlocProvider(
+        // Crée une instance de `LoginBloc` et la met à disposition dans l'arbre des widgets.
         create: (_) => LoginBloc(),
         child: LoginScreen(),
       ),
@@ -697,10 +732,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Cette classe `LoginScreen` crée l'interface utilisateur de la page de connexion.
+// Elle affiche les champs de saisie du nom d'utilisateur et du mot de passe,
+// ainsi qu'un bouton de connexion.
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Récupère l'instance de `LoginBloc` fournie par le `BlocProvider`.
     final loginBloc = context.read<LoginBloc>();
+    // Crée les contrôleurs pour les champs de saisie.
     final usernameController = TextEditingController();
     final passwordController = TextEditingController();
 
@@ -714,15 +754,18 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Champ de saisie pour le nom d'utilisateur.
               TextField(
                 controller: usernameController,
                 decoration: const InputDecoration(labelText: 'Username'),
               ),
+              // Champ de saisie pour le mot de passe (avec masquage).
               TextField(
                 controller: passwordController,
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
               ),
+              // Bouton de connexion qui déclenche l'événement `SubmitLogin`.
               ElevatedButton(
                 onPressed: () {
                   final username = usernameController.text;
@@ -731,6 +774,7 @@ class LoginScreen extends StatelessWidget {
                 },
                 child: const Text('Login'),
               ),
+              // Affichage du résultat de l'authentification (succès ou erreur).
               BlocBuilder<LoginBloc, LoginState>(
                 builder: (context, state) {
                   if (state is LoginSuccess) {
@@ -765,8 +809,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // task_event.dart
+// Cette classe abstraite définit les différents types d'événements liés à la gestion des tâches.
 abstract class TaskEvent {}
 
+// Cette classe concrète représente l'événement d'ajout d'une nouvelle tâche.
+// Elle contient le texte de la tâche à ajouter.
 class AddTask extends TaskEvent {
   final String task;
 
@@ -774,23 +821,31 @@ class AddTask extends TaskEvent {
 }
 
 // task_state.dart
+// Cette classe abstraite définit les différents états possibles de la liste des tâches.
 abstract class TaskState {
   final List<String> tasks;
   TaskState(this.tasks);
 }
 
+// Cette classe concrète représente l'état initial de la liste des tâches, avec une liste vide.
 class TaskInitial extends TaskState {
   TaskInitial() : super([]);
 }
 
+// Cette classe concrète représente l'état mis à jour de la liste des tâches, avec la nouvelle liste de tâches.
 class TaskUpdated extends TaskState {
   TaskUpdated(List<String> tasks) : super(tasks);
 }
 
 // task_bloc.dart
-
+// Cette classe `TaskBloc` implémente la logique métier liée à la gestion des tâches.
+// Elle utilise le package `flutter_bloc` pour gérer les événements et les états.
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
+  // Le constructeur initialise l'état initial de la liste des tâches.
   TaskBloc() : super(TaskInitial()) {
+    // Cette méthode gère l'événement `AddTask`.
+    // Lorsque cet événement est reçu, elle ajoute la nouvelle tâche à la liste
+    // et met à jour l'état en conséquence.
     on<AddTask>((event, emit) {
       final newTasks = List<String>.from(state.tasks)..add(event.task);
       emit(TaskUpdated(newTasks));
@@ -799,16 +854,20 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 }
 
 // main.dart
+// Ce fichier contient le point d'entrée de l'application Flutter.
+// Il crée l'instance de `TaskBloc` et l'injecte dans l'arbre des widgets.
 
 void main() {
   runApp(MyApp());
 }
 
+// Cette classe `MyApp` crée le widget racine de l'application.
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: BlocProvider(
+        // Crée une instance de `TaskBloc` et la met à disposition dans l'arbre des widgets.
         create: (_) => TaskBloc(),
         child: TaskScreen(),
       ),
@@ -816,10 +875,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Cette classe `TaskScreen` crée l'interface utilisateur de la liste des tâches.
+// Elle affiche un champ de saisie pour ajouter une nouvelle tâche, ainsi que la liste des tâches existantes.
 class TaskScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Récupère l'instance de `TaskBloc` fournie par le `BlocProvider`.
     final taskBloc = context.read<TaskBloc>();
+    // Crée le contrôleur pour le champ de saisie de la nouvelle tâche.
     final taskController = TextEditingController();
 
     return Scaffold(
@@ -830,6 +893,7 @@ class TaskScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Champ de saisie pour ajouter une nouvelle tâche.
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
@@ -837,6 +901,7 @@ class TaskScreen extends StatelessWidget {
                 decoration: InputDecoration(labelText: 'Task'),
               ),
             ),
+            // Bouton pour ajouter la nouvelle tâche, qui déclenche l'événement `AddTask`.
             ElevatedButton(
               onPressed: () {
                 final task = taskController.text;
@@ -845,6 +910,7 @@ class TaskScreen extends StatelessWidget {
               },
               child: Text('Add Task'),
             ),
+            // Affichage de la liste des tâches existantes.
             BlocBuilder<TaskBloc, TaskState>(
               builder: (context, state) {
                 return Column(
@@ -876,8 +942,14 @@ Reprenez l'exemple de l'exercice 3 et ajoutez la possibilité de supprimer une t
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// task_event.dart
+// Cette classe abstraite définit les différents types d'événements liés à la gestion des tâches.
 abstract class TaskEvent {}
 
+// Ces classes concrètes représentent les différents événements liés aux tâches :
+// - AddTask : Ajout d'une nouvelle tâche
+// - RemoveTask : Suppression d'une tâche
+// - ToggleCompleteTask : Marquer/démarquer une tâche comme terminée
 class AddTask extends TaskEvent {
   final String task;
 
@@ -897,19 +969,23 @@ class ToggleCompleteTask extends TaskEvent {
 }
 
 // task_state.dart
+// Cette classe abstraite définit les différents états possibles de la liste des tâches.
 abstract class TaskState {
   final List<Task> tasks;
   TaskState(this.tasks);
 }
 
+// Cette classe concrète représente l'état initial de la liste des tâches, avec une liste vide.
 class TaskInitial extends TaskState {
   TaskInitial() : super([]);
 }
 
+// Cette classe concrète représente l'état mis à jour de la liste des tâches, avec la nouvelle liste de tâches.
 class TaskUpdated extends TaskState {
   TaskUpdated(List<Task> tasks) : super(tasks);
 }
 
+// La classe `Task` représente une tâche individuelle, avec son nom et son état (terminée ou non).
 class Task {
   final String name;
   final bool completed;
@@ -918,21 +994,32 @@ class Task {
 }
 
 // task_bloc.dart
-
+// Cette classe `TaskBloc` implémente la logique métier liée à la gestion des tâches.
+// Elle utilise le package `flutter_bloc` pour gérer les événements et les états.
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
+  // Le constructeur initialise l'état initial de la liste des tâches.
   TaskBloc() : super(TaskInitial()) {
+    // Cette méthode gère l'événement `AddTask`.
+    // Lorsque cet événement est reçu, elle ajoute la nouvelle tâche à la liste
+    // et met à jour l'état en conséquence.
     on<AddTask>((event, emit) {
       final newTasks = List<Task>.from(state.tasks)
         ..add(Task(event.task, false));
       emit(TaskUpdated(newTasks));
     });
 
+    // Cette méthode gère l'événement `RemoveTask`.
+    // Lorsque cet événement est reçu, elle supprime la tâche correspondante de la liste
+    // et met à jour l'état en conséquence.
     on<RemoveTask>((event, emit) {
       final newTasks = List<Task>.from(state.tasks)
         ..removeWhere((task) => task.name == event.task);
       emit(TaskUpdated(newTasks));
     });
 
+    // Cette méthode gère l'événement `ToggleCompleteTask`.
+    // Lorsque cet événement est reçu, elle modifie l'état de la tâche correspondante
+    // (terminée ou non) et met à jour l'état en conséquence.
     on<ToggleCompleteTask>((event, emit) {
       final newTasks = state.tasks.map((task) {
         if (task.name == event.task) {
@@ -947,17 +1034,21 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 }
 
 // main.dart
+// Ce fichier contient le point d'entrée de l'application Flutter.
+// Il crée l'instance de `TaskBloc` et l'injecte dans l'arbre des widgets.
 
 void main() {
   runApp(MyApp());
 }
 
+// Cette classe `MyApp` crée le widget racine de l'application.
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BlocProvider(
+        // Crée une instance de `TaskBloc` et la met à disposition dans l'arbre des widgets.
         create: (_) => TaskBloc(),
         child: TaskScreen(),
       ),
@@ -965,10 +1056,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Cette classe `TaskScreen` crée l'interface utilisateur de la liste des tâches.
+// Elle affiche un champ de saisie pour ajouter une nouvelle tâche, ainsi que la liste des tâches existantes,
+// avec des boutons pour supprimer une tâche ou la marquer comme terminée.
 class TaskScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Récupère l'instance de `TaskBloc` fournie par le `BlocProvider`.
     final taskBloc = context.read<TaskBloc>();
+    // Crée le contrôleur pour le champ de saisie de la nouvelle tâche.
     final taskController = TextEditingController();
 
     return Scaffold(
@@ -979,6 +1075,7 @@ class TaskScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Champ de saisie pour ajouter une nouvelle tâche.
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
@@ -986,6 +1083,7 @@ class TaskScreen extends StatelessWidget {
                 decoration: InputDecoration(labelText: 'Task'),
               ),
             ),
+            // Bouton pour ajouter la nouvelle tâche, qui déclenche l'événement `AddTask`.
             ElevatedButton(
               onPressed: () {
                 final task = taskController.text;
@@ -994,6 +1092,7 @@ class TaskScreen extends StatelessWidget {
               },
               child: Text('Add Task'),
             ),
+            // Affichage de la liste des tâches existantes, avec des boutons pour les supprimer ou les marquer comme terminées.
             BlocBuilder<TaskBloc, TaskState>(
               builder: (context, state) {
                 return Column(
@@ -1008,12 +1107,14 @@ class TaskScreen extends StatelessWidget {
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                // Bouton pour supprimer la tâche, qui déclenche l'événement `RemoveTask`.
                                 IconButton(
                                   icon: Icon(Icons.delete),
                                   onPressed: () {
                                     taskBloc.add(RemoveTask(task.name));
                                   },
                                 ),
+                                // Bouton pour marquer/démarquer la tâche comme terminée, qui déclenche l'événement `ToggleCompleteTask`.
                                 IconButton(
                                   icon: Icon(task.completed
                                       ? Icons.check_box
@@ -1057,32 +1158,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Events
+// Cette section définit les différents événements liés à la gestion des tâches et des catégories.
+
+// La classe abstraite `TaskEvent` définit le type d'événements liés aux tâches.
 abstract class TaskEvent {}
 
+// La classe `AddTask` représente l'événement d'ajout d'une nouvelle tâche.
+// Elle contient le texte de la tâche et la catégorie à laquelle elle appartient.
 class AddTask extends TaskEvent {
   final String task;
   final String category;
   AddTask(this.task, this.category);
 }
 
+// La classe `RemoveTask` représente l'événement de suppression d'une tâche.
+// Elle contient le texte de la tâche à supprimer.
 class RemoveTask extends TaskEvent {
   final String task;
   RemoveTask(this.task);
 }
 
+// La classe `ToggleCompleteTask` représente l'événement de marquer/démarquer une tâche comme terminée.
+// Elle contient le texte de la tâche à basculer.
 class ToggleCompleteTask extends TaskEvent {
   final String task;
   ToggleCompleteTask(this.task);
 }
 
+// La classe abstraite `CategoryEvent` définit le type d'événements liés aux catégories.
 abstract class CategoryEvent {}
 
+// La classe `SelectCategory` représente l'événement de sélection d'une catégorie.
+// Elle contient le nom de la catégorie sélectionnée.
 class SelectCategory extends CategoryEvent {
   final String category;
   SelectCategory(this.category);
 }
 
 // States
+// Cette section définit les différents états liés aux tâches et aux catégories.
+
+// La classe `Task` représente une tâche individuelle, avec son nom, son état (terminée ou non) et sa catégorie.
 class Task {
   final String name;
   final bool completed;
@@ -1090,6 +1206,7 @@ class Task {
 
   Task(this.name, this.completed, this.category);
 
+  // La méthode `copyWith` permet de créer une nouvelle instance de `Task` avec des champs modifiés.
   Task copyWith({String? name, bool? completed, String? category}) {
     return Task(
       name ?? this.name,
@@ -1099,6 +1216,8 @@ class Task {
   }
 }
 
+// La classe `TaskState` représente l'état de la liste des tâches.
+// Elle contient la liste des tâches, un indicateur de chargement et un éventuel message d'erreur.
 class TaskState {
   final List<Task> tasks;
   final bool isLoading;
@@ -1110,6 +1229,7 @@ class TaskState {
     this.error,
   });
 
+  // La méthode `copyWith` permet de créer une nouvelle instance de `TaskState` avec des champs modifiés.
   TaskState copyWith({
     List<Task>? tasks,
     bool? isLoading,
@@ -1123,6 +1243,8 @@ class TaskState {
   }
 }
 
+// La classe `CategoryState` représente l'état des catégories.
+// Elle contient la liste des catégories et la catégorie actuellement sélectionnée.
 class CategoryState {
   final List<String> categories;
   final String selectedCategory;
@@ -1132,6 +1254,7 @@ class CategoryState {
     required this.selectedCategory,
   });
 
+  // La méthode `copyWith` permet de créer une nouvelle instance de `CategoryState` avec des champs modifiés.
   CategoryState copyWith({
     List<String>? categories,
     String? selectedCategory,
@@ -1144,20 +1267,29 @@ class CategoryState {
 }
 
 // BLoCs
+// Cette section définit les deux Blocs utilisés pour gérer les tâches et les catégories.
+
+// Le `TaskBloc` gère les événements liés aux tâches (ajout, suppression, marquage comme terminée).
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   TaskBloc() : super(TaskState(tasks: [])) {
+    // Cette méthode gère l'événement `AddTask`.
+    // Lorsqu'elle est appelée, elle ajoute la nouvelle tâche à la liste des tâches et met à jour l'état.
     on<AddTask>((event, emit) {
       final newTasks = List<Task>.from(state.tasks)
         ..add(Task(event.task, false, event.category));
       emit(state.copyWith(tasks: newTasks));
     });
 
+    // Cette méthode gère l'événement `RemoveTask`.
+    // Lorsqu'elle est appelée, elle supprime la tâche correspondante de la liste des tâches et met à jour l'état.
     on<RemoveTask>((event, emit) {
       final newTasks =
           state.tasks.where((task) => task.name != event.task).toList();
       emit(state.copyWith(tasks: newTasks));
     });
 
+    // Cette méthode gère l'événement `ToggleCompleteTask`.
+    // Lorsqu'elle est appelée, elle bascule l'état de la tâche correspondante (terminée ou non) et met à jour l'état.
     on<ToggleCompleteTask>((event, emit) {
       final newTasks = state.tasks.map((task) {
         if (task.name == event.task) {
@@ -1170,12 +1302,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 }
 
+// Le `CategoryBloc` gère les événements liés aux catégories (sélection d'une catégorie).
 class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
   CategoryBloc(List<String> categories)
       : super(CategoryState(
           categories: categories,
           selectedCategory: categories.first,
         )) {
+    // Cette méthode gère l'événement `SelectCategory`.
+    // Lorsqu'elle est appelée, elle met à jour la catégorie sélectionnée dans l'état.
     on<SelectCategory>((event, emit) {
       emit(state.copyWith(selectedCategory: event.category));
     });
@@ -1183,6 +1318,9 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
 }
 
 // UI Components
+// Cette section définit les différents composants d'interface utilisateur de l'application.
+
+// Le `TaskScreen` est le point d'entrée de l'interface utilisateur.
 class TaskScreen extends StatelessWidget {
   const TaskScreen({super.key});
 
@@ -1204,6 +1342,7 @@ class TaskScreen extends StatelessWidget {
   }
 }
 
+// Le `CategorySelector` affiche les différentes catégories et permet de sélectionner une catégorie.
 class CategorySelector extends StatelessWidget {
   const CategorySelector({super.key});
 
@@ -1237,6 +1376,7 @@ class CategorySelector extends StatelessWidget {
   }
 }
 
+// Le `AddTaskForm` permet à l'utilisateur d'ajouter une nouvelle tâche.
 class AddTaskForm extends StatefulWidget {
   const AddTaskForm({super.key});
 
@@ -1283,6 +1423,7 @@ class _AddTaskFormState extends State<AddTaskForm> {
   }
 }
 
+// Le `TaskList` affiche la liste des tâches filtrées par catégorie.
 class TaskList extends StatelessWidget {
   const TaskList({super.key});
 
@@ -1314,6 +1455,7 @@ class TaskList extends StatelessWidget {
   }
 }
 
+// Le `TaskListItem` affiche une tâche individuelle dans la liste.
 class TaskListItem extends StatelessWidget {
   final Task task;
 
@@ -1354,6 +1496,7 @@ class TaskListItem extends StatelessWidget {
   }
 }
 
+// Le `CategoriesBottomNavigationBar` affiche une barre de navigation en bas de l'écran pour sélectionner une catégorie.
 class CategoriesBottomNavigationBar extends StatelessWidget {
   const CategoriesBottomNavigationBar({super.key});
 
@@ -1392,6 +1535,8 @@ void main() {
   runApp(const MyApp());
 }
 
+// Le `MyApp` est le point d'entrée de l'application Flutter.
+// Il crée les instances des `TaskBloc` et `CategoryBloc` et les injecte dans l'arbre des widgets.
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
