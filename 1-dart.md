@@ -198,7 +198,11 @@ void main() async {
     var data = await fetchData();
     print(data);
   } catch (e) {
-    print('Error: $e');
+    if (e is DataException) {
+      print('DataException: ${e.message}');
+    } else {
+      print('Error: ${e}');
+    }
   }
 }
 ```
