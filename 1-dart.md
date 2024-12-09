@@ -199,6 +199,7 @@ void main() async {
     print(data);
   } catch (e) {
     if (e is DataException) {
+      // DataException a un message, affichons-le 
       print('DataException: ${e.message}');
     } else {
       print('Error: ${e}');
